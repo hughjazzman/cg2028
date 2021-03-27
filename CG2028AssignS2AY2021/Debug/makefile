@@ -23,25 +23,25 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: LPC1769_asm_basic.axf
+all: CG2028AssignS2AY2021.axf
 
 # Tool invocations
-LPC1769_asm_basic.axf: $(OBJS) $(USER_OBJS)
+CG2028AssignS2AY2021.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -Tbss 0x10004000 -Xlinker -Map=LPC1769_asm_basic.map -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb -T LPC1769_asm_basic_Debug.ld -o "LPC1769_asm_basic.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"C:\Users\wiraa\Documents\LPCXpresso_6.1.4_194\workspace\Lib_CMSISv1p30_LPC17xx\Debug" -Xlinker --gc-sections -Xlinker -Map=CG2028AssignS2AY2021.map -mcpu=cortex-m3 -mthumb -T "CG2028AssignS2AY2021_Debug.ld" -o"CG2028AssignS2AY2021.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) LPC1769_asm_basic.axf
+	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) CG2028AssignS2AY2021.axf
 	-@echo ' '
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size LPC1769_asm_basic.axf; # arm-none-eabi-objcopy -O binary LPC1769_asm_basic.axf LPC1769_asm_basic.bin ; checksum -p LPC1769 -d LPC1769_asm_basic.bin;
+	-arm-none-eabi-size CG2028AssignS2AY2021.axf; # arm-none-eabi-objcopy -O ihex CG2028AssignS2AY2021.axf CG2028AssignS2AY2021.hex ;
 	-@echo ' '
 
 .PHONY: all clean dependents

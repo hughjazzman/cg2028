@@ -2,17 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-OBJ_SRCS := 
-S_SRCS := 
-ASM_SRCS := 
-C_SRCS := 
-S_UPPER_SRCS := 
-O_SRCS := 
-EXECUTABLES := 
-OBJS := 
-C_DEPS := 
+USER_OBJS :=
 
-# Every subdirectory with source files must be described here
-SUBDIRS := \
-src \
+LIBS := -lCMSISv1p30_LPC17xx
 

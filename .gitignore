@@ -1,0 +1,6 @@
+.*
+!.gitignore
+*.zip
+*.o
+*.d
+*.axf

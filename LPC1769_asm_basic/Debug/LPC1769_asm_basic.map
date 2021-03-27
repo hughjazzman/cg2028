@@ -1,55 +1,153 @@
 
 Discarded input sections
 
+ .text          0x00000000       0x4c ./src/asm.o
  .data          0x00000000        0x0 ./src/asm.o
+ .bss           0x00000000        0x4 ./src/asm.o
+ .debug_line    0x00000000       0x4a ./src/asm.o
+ .debug_info    0x00000000       0x8b ./src/asm.o
+ .debug_abbrev  0x00000000       0x14 ./src/asm.o
+ .debug_aranges
+                0x00000000       0x20 ./src/asm.o
+ .ARM.attributes
+                0x00000000       0x21 ./src/asm.o
 
 Memory Configuration
 
 Name             Origin             Length             Attributes
 MFlash512        0x00000000         0x00080000         xr
+RamLoc32         0x10000000         0x00008000         xrw
+RamAHB32         0x2007c000         0x00008000         xrw
 *default*        0x00000000         0xffffffff
 
 Linker script and memory map
 
 LOAD ./src/asm.o
 Address of section .bss set to 0x10004000
+START GROUP
+LOAD c:/nxp/lpcxpresso_8.2.2_650/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m\libcr_c.a
+LOAD c:/nxp/lpcxpresso_8.2.2_650/lpcxpresso/tools/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m\libcr_eabihelpers.a
+END GROUP
+                0x00000000                __base_MFlash512 = 0x0
+                0x00000000                __base_Flash = 0x0
+                0x00080000                __top_MFlash512 = 0x80000
+                0x00080000                __top_Flash = 0x80000
+                0x10000000                __base_RamLoc32 = 0x10000000
+                0x10000000                __base_RAM = 0x10000000
+                0x10008000                __top_RamLoc32 = 0x10008000
+                0x10008000                __top_RAM = 0x10008000
+                0x2007c000                __base_RamAHB32 = 0x2007c000
+                0x2007c000                __base_RAM2 = 0x2007c000
+                0x20084000                __top_RamAHB32 = 0x20084000
+                0x20084000                __top_RAM2 = 0x20084000
 
-.text           0x00000000       0x4c
+.text           0x00000000       0x28
  FILL mask 0xff
+                0x00000000                __vectors_start__ = ABSOLUTE (.)
+ *(.isr_vector)
+                0x00000000                . = ALIGN (0x4)
+                0x00000000                __section_table_start = .
+                0x00000000                __data_section_table = .
+                0x00000000        0x4 LONG 0x28 LOADADDR (.data)
+                0x00000004        0x4 LONG 0x10000000 ADDR (.data)
+                0x00000008        0x4 LONG 0x0 SIZEOF (.data)
+                0x0000000c        0x4 LONG 0x28 LOADADDR (.data_RAM2)
+                0x00000010        0x4 LONG 0x2007c000 ADDR (.data_RAM2)
+                0x00000014        0x4 LONG 0x0 SIZEOF (.data_RAM2)
+                0x00000018                __data_section_table_end = .
+                0x00000018                __bss_section_table = .
+                0x00000018        0x4 LONG 0x10004000 ADDR (.bss)
+                0x0000001c        0x4 LONG 0x0 SIZEOF (.bss)
+                0x00000020        0x4 LONG 0x2007c000 ADDR (.bss_RAM2)
+                0x00000024        0x4 LONG 0x0 SIZEOF (.bss_RAM2)
+                0x00000028                __bss_section_table_end = .
+                0x00000028                __section_table_end = .
+ *(.after_vectors*)
  *(.text*)
- .text          0x00000000       0x4c ./src/asm.o
-                0x00000020                _start
+ *(.rodata .rodata.* .constdata .constdata.*)
+                0x00000028                . = ALIGN (0x4)
+
+.glue_7         0x00000028        0x0
+ .glue_7        0x00000028        0x0 linker stubs
+
+.glue_7t        0x00000028        0x0
+ .glue_7t       0x00000028        0x0 linker stubs
+
+.vfp11_veneer   0x00000028        0x0
+ .vfp11_veneer  0x00000028        0x0 linker stubs
+
+.v4_bx          0x00000028        0x0
+ .v4_bx         0x00000028        0x0 linker stubs
+
+.iplt           0x00000028        0x0
+ .iplt          0x00000028        0x0 ./src/asm.o
+
+.rel.dyn        0x00000028        0x0
+ .rel.iplt      0x00000028        0x0 ./src/asm.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x00000028                __exidx_start = .
+
+.ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x00000028                __exidx_end = .
+                0x00000028                _etext = .
+
+.data_RAM2      0x2007c000        0x0 load address 0x00000028
+ FILL mask 0xff
+                [!provide]                PROVIDE (__start_data_RAM2, .)
+ *(.ramfunc.$RAM2)
+ *(.ramfunc.$RamAHB32)
+ *(.data.$RAM2*)
+ *(.data.$RamAHB32*)
+                0x2007c000                . = ALIGN (0x4)
+                [!provide]                PROVIDE (__end_data_RAM2, .)
+
+.uninit_RESERVED
+                0x10000000        0x0
+ *(.bss.$RESERVED*)
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                _end_uninit_RESERVED = .
+
+.data           0x10000000        0x0 load address 0x00000028
+ FILL mask 0xff
+                0x10000000                _data = .
+ *(vtable)
+ *(.ramfunc*)
+ *(.data*)
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                _edata = .
+
+.igot.plt       0x10000000        0x0 load address 0x00000028
+ .igot.plt      0x10000000        0x0 ./src/asm.o
+
+.bss_RAM2       0x2007c000        0x0
+                [!provide]                PROVIDE (__start_bss_RAM2, .)
+ *(.bss.$RAM2*)
+ *(.bss.$RamAHB32*)
+                0x2007c000                . = ALIGN ((. != 0x0)?0x4:0x1)
+                [!provide]                PROVIDE (__end_bss_RAM2, .)
+
+.bss            0x10004000        0x0
+                0x10004000                _bss = .
+ *(.bss*)
+ *(COMMON)
+                0x10004000                . = ALIGN (0x4)
+                0x10004000                _ebss = .
+                [!provide]                PROVIDE (end, .)
+
+.noinit_RAM2    0x2007c000        0x0
+ *(.noinit.$RAM2*)
+ *(.noinit.$RamAHB32*)
+                0x2007c000                . = ALIGN (0x4)
+
+.noinit         0x10000000        0x0
+                0x10000000                _noinit = .
+ *(.noinit*)
+                0x10000000                . = ALIGN (0x4)
+                0x10000000                _end_noinit = .
+                [!provide]                PROVIDE (_pvHeapStart, DEFINED (__user_heap_base)?__user_heap_base:.)
+                [!provide]                PROVIDE (_vStackTop, DEFINED (__user_stack_top)?__user_stack_top:(__top_RamLoc32 - 0x0))
+                [!provide]                PROVIDE (__valid_user_code_checksum, (0x0 - ((((((_vStackTop + (ResetISR + 0x1)) + (NMI_Handler + 0x1)) + (HardFault_Handler + 0x1)) + (DEFINED (MemManage_Handler)?MemManage_Handler:0x0 + 0x1)) + (DEFINED (BusFault_Handler)?BusFault_Handler:0x0 + 0x1)) + (DEFINED (UsageFault_Handler)?UsageFault_Handler:0x0 + 0x1))))
 OUTPUT(LPC1769_asm_basic.axf elf32-littlearm)
-
-.glue_7         0x0000004c        0x0
- .glue_7        0x00000000        0x0 linker stubs
-
-.glue_7t        0x0000004c        0x0
- .glue_7t       0x00000000        0x0 linker stubs
-
-.vfp11_veneer   0x0000004c        0x0
- .vfp11_veneer  0x00000000        0x0 linker stubs
-
-.v4_bx          0x0000004c        0x0
- .v4_bx         0x00000000        0x0 linker stubs
-
-.bss            0x10004000        0x4
- .bss           0x10004000        0x4 ./src/asm.o
-
-.ARM.attributes
-                0x00000000       0x21
- .ARM.attributes
-                0x00000000       0x21 ./src/asm.o
-
-.debug_line     0x00000000       0x47
- .debug_line    0x00000000       0x47 ./src/asm.o
-
-.debug_info     0x00000000       0x8a
- .debug_info    0x00000000       0x8a ./src/asm.o
-
-.debug_abbrev   0x00000000       0x14
- .debug_abbrev  0x00000000       0x14 ./src/asm.o
-
-.debug_aranges  0x00000000       0x20
- .debug_aranges
-                0x00000000       0x20 ./src/asm.o
