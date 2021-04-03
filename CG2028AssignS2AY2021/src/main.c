@@ -59,3 +59,4 @@ int iir_c(int N, int* b, int* a, int x_n)
 	
 	return y_n;
 }
+

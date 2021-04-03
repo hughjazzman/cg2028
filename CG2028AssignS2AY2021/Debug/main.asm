@@ -447,17 +447,17 @@
  368              	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:19     .rodata:00000000 $d
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:20     .rodata:00000000 .LC1
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:23     .rodata:0000001c .LC2
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:26     .rodata:00000038 .LC0
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:40     .text.main:00000000 $t
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:45     .text.main:00000000 main
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:229    .text.iir_c:00000000 iir_c
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:224    .text.iir_c:00000000 $t
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:362    .bss:00000000 x_store.3834
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:365    .bss:00000028 y_store.3835
-C:\Users\wiraa\AppData\Local\Temp\ccazgwlJ.s:361    .bss:00000000 $d
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:19     .rodata:00000000 $d
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:20     .rodata:00000000 .LC1
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:23     .rodata:0000001c .LC2
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:26     .rodata:00000038 .LC0
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:40     .text.main:00000000 $t
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:45     .text.main:00000000 main
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:229    .text.iir_c:00000000 iir_c
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:224    .text.iir_c:00000000 $t
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:362    .bss:00000000 x_store.3834
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:365    .bss:00000028 y_store.3835
+C:\Users\User\AppData\Local\Temp\ccJ3vKWc.s:361    .bss:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
