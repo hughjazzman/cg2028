@@ -56,11 +56,18 @@ iir:
 @ PW = 0b00 -> Post index, 0b10 -> offset, 0b11 -> pre index
 @ U = positive/negative offset
 @ L = load/store
+@ DP (Mul)
+@ X, op, I, cmd, S, Rn, Rd, Rs, X, M, Rm
+@ 4, 2 , 1,	  4, 1,  4,  4,  4, 3, 1,  4
+@ op = 00
+@ I = 0
+@ cmd = 0000 -> MUL, 0001 -> MLA
+@ S = set flag
 
 	@ b[0]
 	LDR R8, [R1], #4 @ Memory: 0b0000,0100,1001,0001,1000,0000,0000,0100
 	@ b[0] * x_n
-	MUL R11, R3, R8 @ DP
+	MUL R11, R3, R8 @ DP: 0b0000,0000,0000,0000,1011,1000,0001,0011
 
 	@ load start address to x_store, y_store
 	LDR R4, =x_store
@@ -71,116 +78,115 @@ iir:
 	LDR R12, [R4] @ Memory: 0b0000,0100,1001,0100,1100,0000,0000,0000
 	@ if N is greater than number of previous calls
 	@ update N so loop doesn't get invalid values
-	CMP R0, R12 @ DP
+	CMP R0, R12 @ DP: 0b0000,0001,0101,0000,0000,0000,0000,1100
 	IT GT
 	MOVGT R0, R12
-	MOV R10, R0 @ DP
+	MOV R10, R0 @ DP: 0b0000,0001,1010,0000,1010,0000,0000,0000
 
 	@ increment the no. of calls
-	ADD R12, #1 @ DP
+	ADD R12, #1 @ DP: 0b0000,0010,1000,1100,1100,0000,0000,0001
 	STR R12, [R4], #4 @ Memory: 0b0000,0100,1000,0100,0110,0000,0000,0100
-
-	@ &x_(n-1) to compare later
-	MOV R12, R6 @ DP
 
 	@ increment to reference a[1]
 	@ divide by a[0] at the end
-	ADD R2, #4 @ DP
+	ADD R2, #4 @ DP: 0b0000,0010,1000,0010,0010,0000,0000,0100
 
 	@ check if address exists in x_store yet
-	CMP R6, #0 @ DP
-	BEQ zero @ Branch
+	CMP R6, #0 @ DP: 0b0000,0011,0101,0110,0000,0000,0000,0000
+	BEQ zero @ Branch: 0b0000,1000,1000,0000,0000,0000,0100,1100
+
+	@ &x_(n-1) to compare later
+	MOV R12, R6 @ DP: 0b0000,0001,1010,0000,1100,0000,0000,0110
 
 	@ load &y_(n-1)
 	LDR R7, [R5] @ Memory: 0b0000,0100,1001,0101,0111,0000,0000,0000
 
 	@ if no need to enter loop
-	CMP R10, #0 @ DP
-	BEQ end @ Branch
+	CMP R10, #0 @ DP: 0b0000,0011,0101,1010,0000,0000,0000,0000
+	BEQ end @ Branch: 0b0000,1000,1000,0000,0000,0000,0100,0100
 
 
 
 loop:
 
 	@ load x[n-i] value
-	LDR R9, [R6], #-4 @ Memory
+	LDR R9, [R6], #-4 @ Memory: 0b0000,0100,0001,0110,1001,0000,0000,0100
 	@ check if value loaded is the n-1 address
-	CMP R9, R12 @ DP
-	BEQ circle @ Branch
+	CMP R9, R12 @ DP: 0b0000,0001,1101,1001,0000,0000,0000,1100
+	BEQ circle @ Branch: 0b0000,1000,1000,0000,0000,0000,0010,0000
 
 
 	@ b[i]
-	LDR R8, [R1], #4 @ Memory
+	LDR R8, [R1], #4 @ Memory: 0b0000,0100,1001,0001,1000,0000,0000,0100
 
 	@ y_n += b[i] * x[n-i]
-	MLA R11, R8, R9, R11 @ DP
+	MLA R11, R8, R9, R11 @ DP: 0b0000,0000,0010,1011,1011,1001,0001,1000
 
 	@ load y[n-i] value
-	LDR R9, [R7], #-4 @ Memory
+	LDR R9, [R7], #-4 @ Memory: 0b0000,0100,0001,0111,1001,0000,0000,0100
 
 	@ a[i]
-	LDR R8, [R2], #4 @ Memory
+	LDR R8, [R2], #4 @ Memory: 0b0000,0100,1001,0010,1000,0000,0000,0100
 
 	@ y_n -= a[i] * y[n-i]
-	MLS R11, R8, R9, R11 @DP
+	MLS R11, R8, R9, R11
 
 	@ decrement counter
-	SUB R10, #1 @ DP
-	CMP R10, #0 @ DP
-	BGT loop @ Branch
-	B end @ Branch
+	SUBS R10, #1 @ DP: 0b0000,0010,0101,1010,1010,0000,0000,0001
+	BGT loop @ Branch: 0b1100,1000,0000,0000,0000,0000,0010,1000
+	B end @ Branch: 0b1110,1000,1000,0000,0000,0000,0001,1000
 
 @ load end addresses of x_store, y_store
 @ N bytes from start addresses
 circle:
-	MOV R12, #N_MAX @ DP
+	MOV R12, #N_MAX @ DP: 0b0000,0011,1010,0000,1100,0000,0000,1010
 	ADD R6, R4, R12, LSL #2
 	ADD R7, R5, R12, LSL #2
-	B loop
+	B loop @ Branch: 0b1110,1000,0000,0000,0000,0000,0011,1100
 
 @ for x_0, y_0 no address yet in x_store, y_store
 @ get address into x_store for consistency
 zero:
-	STR R4, [R4] @ Memory
-	STR R5, [R5] @ Memory
+	STR R4, [R4] @ Memory: 0b0000,0100,1000,0100,0100,0000,0000,0000
+	STR R5, [R5] @ Memory: 0b0000,0100,1000,0101,0101,0000,0000,0000
 
 end:
 	@ get back start address of a
 	SUB R2, R2, R0, LSL #2
-	SUB R2, #4 @ DP
-	LDR R8, [R2] @ Memory
+	SUB R2, #4 @ DP: 0b0000,0010,0100,0010,0010,0000,0000,0100
+	LDR R8, [R2] @ Memory: 0b0000,0101,1001,0010,1000,0000,0000,0000
 
 	@ /a[0]
 	SDIV R11, R8
 
 	@ get next address to overwrite
-	LDR R6, [R4] @ Memory
-	LDR R7, [R5] @ Memory
+	LDR R6, [R4] @ Memory: 0b0000,0101,1001,0100,0110,0000,0000,0000
+	LDR R7, [R5] @ Memory: 0b0000,0101,1001,0101,0111,0000,0000,0000
 
 	@ check if at end of array
-	MOV R12, #N_MAX @ DP
+	MOV R12, #N_MAX @ DP: 0b0000,0011,1010,0000,1100,0000,0000,1010
 	LDR R8, =y_store
 	ADD R8, R8, R12, LSL #2
-	CMP R8, R7 @ DP
-	BNE store @ Branch
+	CMP R8, R7 @ DP: 0b0000,0001,1101,1000,0000,0000,0000,0111
+	BNE store @ Branch: 0b0001,1000,1000,0000,0000,0000,0000,1100
 	LDR R6, =x_store
-	ADD R6, #4 @ DP
+	ADD R6, #4 @ DP: 0b0000,0010,1000,0110,0110,0000,0000,0100
 	LDR R7, =y_store
 
 store:
 
 	@ store x_n, y_n into x_store, y_store
-	STR R3, [R6, #4]! @ Memory
-	STR R11, [R7, #4]! @ Memory
+	STR R3, [R6, #4]! @ Memory: 0b0000,0101,1010,0110,0011,0000,0000,0100
+	STR R11, [R7, #4]! @ Memory: 0b0000,0101,1010,0111,1011,0000,0000,0100
 
 	@ store pointer to (n-1)th address for next n
-	STR R6, [R4] @ Memory
-	STR R7, [R5] @ Memory
+	STR R6, [R4] @ Memory: 0b0000,0100,1000,0100,0110,0000,0000,0000
+	STR R7, [R5] @ Memory: 0b0000,0100,1000,0101,0111,0000,0000,0000
 
 	@ /100
-	MOV R10, #100 @ DP
+	MOV R10, #100 @ DP: 0b0000,0011,1010,0000,1010,0000,0110,0100
 	@SDIV R11, R10
-	MOV R0, R11 @ DP
+	MOV R0, R11 @ DP: 0b0000,0001,1010,0000,0000,0000,0000,1011
 
 
 
