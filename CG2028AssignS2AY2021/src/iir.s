@@ -8,6 +8,9 @@
 @ CG2028 Assignment, Sem 2, AY 2020/21
 @ (c) CG2028 Teaching Team, ECE NUS, 2021
 
+@ Wira Azmoon Ahmad, A0149286R
+@ R Ramana, A0197788X
+
 @Register map
 @R0 - N, returns y
 @R1 - b
@@ -21,7 +24,7 @@
 @R9 - x_store, y_store values
 @R10 - N counter
 @R11 - y_n
-@R12 - no. of call, N_MAX
+@R12 - no. of call, pointer to x_(n-1), N_MAX
 
 
 iir:
@@ -46,9 +49,16 @@ iir:
 @ which means it can only come from the second source operand.
 @ Hence, the first source operand (which has to be a register, not immediate) is not used.
 
+@ Memory
+@ X, op, X, P, U, X, W, L, Rn, Rd, X, imm8
+@ 4, 2 , 1, 1, 1, 1, 1, 1,  4,  4, 4, 8
+@ op = 01
+@ PW = 0b00 -> Post index, 0b10 -> offset, 0b11 -> pre index
+@ U = positive/negative offset
+@ L = load/store
 
 	@ b[0]
-	LDR R8, [R1], #4 @ Memory
+	LDR R8, [R1], #4 @ Memory: 0b0000,0100,1001,0001,1000,0000,0000,0100
 	@ b[0] * x_n
 	MUL R11, R3, R8 @ DP
 
@@ -56,9 +66,9 @@ iir:
 	LDR R4, =x_store
 	LDR R5, =y_store
 	@ load pointer to (n-1)th values of x and y
-	LDR R6, [R4, #4] @ Memory
+	LDR R6, [R4, #4] @ Memory: 0b0000,0101,1001,0100,0110,0000,0000,0100
 	@ load current no. of call n
-	LDR R12, [R4] @ Memory
+	LDR R12, [R4] @ Memory: 0b0000,0100,1001,0100,1100,0000,0000,0000
 	@ if N is greater than number of previous calls
 	@ update N so loop doesn't get invalid values
 	CMP R0, R12 @ DP
@@ -68,9 +78,9 @@ iir:
 
 	@ increment the no. of calls
 	ADD R12, #1 @ DP
-	STR R12, [R4], #4 @ Memory
+	STR R12, [R4], #4 @ Memory: 0b0000,0100,1000,0100,0110,0000,0000,0100
 
-	@ to compare later
+	@ &x_(n-1) to compare later
 	MOV R12, R6 @ DP
 
 	@ increment to reference a[1]
@@ -81,7 +91,8 @@ iir:
 	CMP R6, #0 @ DP
 	BEQ zero @ Branch
 
-	LDR R7, [R5] @ Memory
+	@ load &y_(n-1)
+	LDR R7, [R5] @ Memory: 0b0000,0100,1001,0101,0111,0000,0000,0000
 
 	@ if no need to enter loop
 	CMP R10, #0 @ DP
