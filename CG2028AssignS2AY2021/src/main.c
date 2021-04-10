@@ -13,12 +13,12 @@ int main(void)
 {
 	//variables
 	int i;
-	int N = 4;
+	int N = 8;
 	// think of the values below as numbers of the form y.yy (floating point with 2 digits precision)
 	// which are scaled up to allow them to be used integers
 	// within the iir function, we divide y by 100 (decimal) to scale it down
-	int b[N_MAX+1] = {100, 250, 360, 450, 580}; //N+1 dimensional feedforward
-	int a[N_MAX+1] = {100, 120, 180, 230, 250}; //N+1 dimensional feedback
+	int b[N_MAX+1] = {100, 250, 360, 450, 580, 690, 710, 820, 900, 1030}; //N+1 dimensional feedforward
+	int a[N_MAX+1] = {100, 120, 180, 230, 250, 340, 260, 130, 140, 80}; //N+1 dimensional feedback
 	int x[X_SIZE] = {100, 230, 280, 410, 540, 600, 480, 390, 250, 160, 100, 340};
 
 	// Call assembly language function iir for each element of x
@@ -41,7 +41,7 @@ int iir_c(int N, int* b, int* a, int x_n)
 
 	y_n = x_n*b[0]/a[0];
 	
-	for (j=0; j<=N; j++)
+	for (j=0; j<N; j++)
 	{
 		y_n+=(b[j+1]*x_store[j]-a[j+1]*y_store[j])/a[0];
 	}
