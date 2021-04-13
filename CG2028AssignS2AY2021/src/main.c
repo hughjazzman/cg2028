@@ -55,7 +55,7 @@ int iir_c(int N, int* b, int* a, int x_n)
 	x_store[0] = x_n;
 	y_store[0] = y_n;
 	
-//	y_n /= 100; // scaling down
+	y_n /= 100; // scaling down
 	
 	return y_n;
 }
